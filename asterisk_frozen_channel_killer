@@ -1,0 +1,13 @@
+#!/bin/bash
+channels=()
+for channel in `/usr/sbin/asterisk  -rx "core show channels verbose" | grep -v 00:..... | cut -d ' ' -f 1 | grep SIP/`
+do
+    /usr/sbin/asterisk -x "channel request hangup $channel"
+    channels+=($channel)
+done
+if [ ${#channels[@]} -gt 0 ]
+then
+    logger "All Channels ${channels[@]} are killed."
+else
+    logger "There was no frozen channels."
+fi
